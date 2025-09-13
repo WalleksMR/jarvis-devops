@@ -2,6 +2,7 @@
 
 # Variáveis
 APP_NAME := jarvis-devops
+BUILD_DIR := build
 VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
 COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
@@ -18,12 +19,13 @@ all: build
 
 # Build binário com assets embutidos
 .PHONY: build
-build: $(APP_NAME)
+build: $(BUILD_DIR)/$(APP_NAME)
 
-$(APP_NAME): $(SOURCES)
+$(BUILD_DIR)/$(APP_NAME): $(SOURCES)
 	@echo "🔨 Building $(APP_NAME)..."
-	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -trimpath -o $(APP_NAME) ./cmd/server
-	@echo "✅ Build complete! Binary: $(APP_NAME)"
+	@mkdir -p $(BUILD_DIR)
+	CGO_ENABLED=0 go build -ldflags="$(LDFLAGS)" -trimpath -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server
+	@echo "✅ Build complete! Binary: $(BUILD_DIR)/$(APP_NAME)"
 
 # Build otimizado usando o script
 .PHONY: build-optimized
@@ -62,6 +64,7 @@ deps:
 .PHONY: clean
 clean:
 	@echo "🧹 Cleaning build artifacts..."
+	rm -rf $(BUILD_DIR)
 	rm -f $(APP_NAME) $(APP_NAME)-* *.info
 
 # Instalar dependências de desenvolvimento

@@ -99,7 +99,7 @@ LOG_LEVEL=info
 
 **Single Binary Deployment:**
 1. Build: `./build.sh` or `make build-optimized`
-2. Copy binary to target server: `scp jarvis-devops-linux-amd64 user@server:/opt/jarvis/`
+2. Copy binary to target server: `scp build/jarvis-devops-linux-amd64 user@server:/opt/jarvis/`
 3. Set permissions: `chmod +x jarvis-devops-linux-amd64`
 4. Run: `./jarvis-devops-linux-amd64`
 
@@ -216,8 +216,8 @@ Always validate nginx configurations before applying changes using the `Validate
 ### Build Testing
 
 1. Test development mode: `go run ./cmd/server/main.go`
-2. Test embedded build: `make build && ./jarvis-devops`
-3. Verify assets work without external `web/` directory
+2. Test embedded build: `make build && ./build/jarvis-devops`
+3. Verify assets work without external web directory
 4. Test binary portability by copying to different location
 
 ## Production Deployment Best Practices

@@ -31,6 +31,7 @@ print_error() {
 
 # Configurações
 APP_NAME="jarvis-devops"
+BUILD_DIR="build"
 VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
 COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_TIME=$(date -u '+%Y-%m-%d_%H:%M:%S')
@@ -43,11 +44,14 @@ if [ "$GOOS" = "windows" ]; then
     BINARY_NAME="${BINARY_NAME}.exe"
 fi
 
+# Caminho completo do binário
+BINARY_PATH="${BUILD_DIR}/${BINARY_NAME}"
+
 print_status "Iniciando build do Jarvis DevOps..."
 print_status "Versão: ${VERSION}"
 print_status "Commit: ${COMMIT}"
 print_status "Plataforma: ${GOOS}/${GOARCH}"
-print_status "Binário: ${BINARY_NAME}"
+print_status "Binário: ${BINARY_PATH}"
 
 # Verificar se os assets existem
 if [ ! -d "internal/assets/web" ]; then
@@ -55,9 +59,10 @@ if [ ! -d "internal/assets/web" ]; then
     exit 1
 fi
 
-# Limpar builds anteriores
+# Limpar builds anteriores e criar diretório
 print_status "Limpando builds anteriores..."
-rm -f ${APP_NAME}-* jarvis-devops-embedded
+rm -rf ${BUILD_DIR}
+mkdir -p ${BUILD_DIR}
 
 # Build flags para otimização
 LDFLAGS="-w -s"
@@ -70,19 +75,19 @@ print_status "Compilando binário..."
 CGO_ENABLED=0 GOOS=${GOOS} GOARCH=${GOARCH} go build \
     -ldflags="${LDFLAGS}" \
     -trimpath \
-    -o ${BINARY_NAME} \
+    -o ${BINARY_PATH} \
     ./cmd/server
 
 # Verificar se o build foi bem-sucedido
-if [ ! -f "${BINARY_NAME}" ]; then
+if [ ! -f "${BINARY_PATH}" ]; then
     print_error "Falha na compilação do binário"
     exit 1
 fi
 
 # Mostrar informações do binário
-BINARY_SIZE=$(du -h ${BINARY_NAME} | cut -f1)
+BINARY_SIZE=$(du -h ${BINARY_PATH} | cut -f1)
 print_success "Build concluído com sucesso!"
-print_status "Arquivo: ${BINARY_NAME}"
+print_status "Arquivo: ${BINARY_PATH}"
 print_status "Tamanho: ${BINARY_SIZE}"
 
 # Verificar se UPX está disponível para compressão
@@ -91,8 +96,8 @@ if command -v upx &> /dev/null; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_status "Comprimindo binário com UPX..."
-        upx --best --lzma ${BINARY_NAME}
-        COMPRESSED_SIZE=$(du -h ${BINARY_NAME} | cut -f1)
+        upx --best --lzma ${BINARY_PATH}
+        COMPRESSED_SIZE=$(du -h ${BINARY_PATH} | cut -f1)
         print_success "Binário comprimido! Novo tamanho: ${COMPRESSED_SIZE}"
     fi
 else
@@ -100,7 +105,8 @@ else
 fi
 
 # Criar arquivo de informações
-cat > ${BINARY_NAME}.info << EOF
+INFO_FILE="${BUILD_DIR}/${BINARY_NAME}.info"
+cat > ${INFO_FILE} << EOF
 Jarvis DevOps - Build Information
 ================================
 Version: ${VERSION}
@@ -111,11 +117,11 @@ Binary Size: ${BINARY_SIZE}
 Go Version: $(go version)
 
 Dependencies Embedded:
-- HTML Templates (web/templates)
-- Static Assets (web/static/css, web/static/js)
+- HTML Templates (internal/assets/web/templates)
+- Static Assets (internal/assets/web/static/css, internal/assets/web/static/js)
 
 Deployment:
-1. Copy ${BINARY_NAME} to target server
+1. Copy ${BINARY_PATH} to target server
 2. Set environment variables (see .env.example)
 3. Run: ./${BINARY_NAME}
 
@@ -123,10 +129,10 @@ No external dependencies required!
 EOF
 
 print_success "Build completo!"
-print_status "Arquivo de informações criado: ${BINARY_NAME}.info"
+print_status "Arquivo de informações criado: ${INFO_FILE}"
 print_status ""
 print_status "Para testar o binário:"
-print_status "  ./${BINARY_NAME}"
+print_status "  ./${BINARY_PATH}"
 print_status ""
 print_status "Para build cross-platform:"
 print_status "  GOOS=windows GOARCH=amd64 ./build.sh"

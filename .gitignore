@@ -1,2 +1,7 @@
 .env*
 !.env.example
+
+# Build artifacts
+build/
+*.exe
+*.info

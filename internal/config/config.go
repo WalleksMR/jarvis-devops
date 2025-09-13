@@ -36,7 +36,7 @@ func Load() (*Config, error) {
 	cfg := &Config{
 		ServerHost:        getEnv("SERVER_HOST", "0.0.0.0"),
 		ServerPort:        getEnv("SERVER_PORT", "8080"),
-		NginxConfigPath:   getEnv("NGINX_CONFIG_PATH", "/etc/nginx/sites-available"),
+		NginxConfigPath:   getEnv("NGINX_CONFIG_PATH", "/etc/nginx/conf.d"),
 		NginxBinary:       getEnv("NGINX_BINARY", "/usr/sbin/nginx"),
 		NginxServiceName:  getEnv("NGINX_SERVICE_NAME", "nginx"),
 		BasicAuthUser:     getEnv("BASIC_AUTH_USER", "admin"),
