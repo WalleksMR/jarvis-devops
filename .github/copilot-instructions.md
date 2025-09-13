@@ -177,10 +177,12 @@ Key service methods:
 ### Working with Embedded Assets
 
 When modifying web assets:
-1. Edit files in `internal/assets/web/` (not the original `web/` directory)
+1. Edit files in `internal/assets/web/` (this is the only web directory)
 2. Test changes: `go run ./cmd/server/main.go`
 3. Build production binary: `make build-optimized`
 4. Deploy the new binary
+
+**Important**: The original `web/` directory has been removed. All assets are now in `internal/assets/web/` and embedded in the binary.
 
 ## API Integration
 
