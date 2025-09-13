@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{.title}} - {{.filename}}</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/static/public/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/public/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/public/favicon/favicon-32x32.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -269,7 +275,8 @@
             id="config-editor"
             x-model="content"
             @input="hasChanges = true"
-            class="w-full h-96 p-4 font-mono text-sm border-none focus:outline-none resize-none"
+            class="w-full p-4 font-mono text-sm border-none focus:outline-none resize-none"
+            style="height: 100rem;"
             placeholder="Conteúdo do arquivo aparecerá aqui..."
           ></textarea>
         </div>

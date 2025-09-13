@@ -46,7 +46,7 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 // indexPage serves the main web interface
 func (h *Handler) indexPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title": "Nginx Configuration Manager",
+		"title": "Jarvis DevOps",
 	})
 }
 

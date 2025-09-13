@@ -53,27 +53,32 @@ function configEditor(filename) {
       // Wait for next tick to ensure textarea is rendered
       this.$nextTick(() => {
         const textarea = document.getElementById("config-editor");
-        if (textarea && typeof CodeMirror !== "undefined") {
-          this.editor = CodeMirror.fromTextArea(textarea, {
-            mode: "nginx",
-            theme: "material",
-            lineNumbers: true,
-            lineWrapping: true,
-            indentUnit: 4,
-            tabSize: 4,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            showCursorWhenSelecting: true,
-            styleActiveLine: true,
-          });
-
-          this.editor.setValue(this.content);
-
-          this.editor.on("change", () => {
-            this.content = this.editor.getValue();
-            this.hasChanges = this.content !== this.originalContent;
-          });
+        
+        // Check if editor is already initialized
+        if (this.editor || !textarea || typeof CodeMirror === "undefined") {
+          return;
         }
+
+        this.editor = CodeMirror.fromTextArea(textarea, {
+          mode: "nginx",
+          theme: "material",
+          lineNumbers: true,
+          lineWrapping: true,
+          indentUnit: 4,
+          tabSize: 4,
+          autoCloseBrackets: true,
+          matchBrackets: true,
+          showCursorWhenSelecting: true,
+          styleActiveLine: true,
+        });
+        
+        this.editor.setSize("100%", "600px");
+        this.editor.setValue(this.content);
+
+        this.editor.on("change", () => {
+          this.content = this.editor.getValue();
+          this.hasChanges = this.content !== this.originalContent;
+        });
       });
     },
 
@@ -167,9 +172,14 @@ function configEditor(filename) {
       }
 
       await this.loadConfig();
+      
+      // Update editor content if it exists
       if (this.editor) {
         this.editor.setValue(this.content);
+        this.originalContent = this.content;
+        this.hasChanges = false;
       }
+      
       this.showNotification("info", "Arquivo recarregado");
     },
 
