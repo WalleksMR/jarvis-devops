@@ -5,10 +5,13 @@
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Nginx](https://img.shields.io/badge/Nginx-Compatible-green.svg)](https://nginx.org/)
+[![Embedded Assets](https://img.shields.io/badge/Assets-Embedded-orange.svg)](internal/assets/)
 
 ## 📖 Sobre
 
 O Jarvis DevOps é uma aplicação web desenvolvida em Go que permite o gerenciamento completo das configurações do nginx através de uma interface moderna e intuitiva. Perfeito para administradores de sistema que precisam de uma forma rápida e segura de editar, validar e aplicar configurações nginx.
+
+**🎯 Binário único com assets embutidos** - Todos os arquivos web (HTML, CSS, JS) são incluídos no binário para distribuição simplificada.
 
 ## ✨ Funcionalidades Principais
 
@@ -19,9 +22,11 @@ O Jarvis DevOps é uma aplicação web desenvolvida em Go que permite o gerencia
 - ✅ **Reload e restart seguros** do nginx
 - ✅ **Visualização de logs** em tempo real
 - ✅ **Interface responsiva** com Tailwind CSS
+- ✅ **Distribuição simplificada** com binário único
 - ✅ **API REST completa** para automação
 - ✅ **Backup automático** antes de modificações
 - ✅ **Autenticação Basic Auth** integrada
+- ✅ **Binário único** com todos os recursos embutidos
 
 ## 🚀 Início Rápido
 
@@ -53,6 +58,20 @@ go build -o jarvis-devops ./cmd/server
 ### 3. Acesse
 
 Abra http://localhost:8080 no seu navegador e faça login com as credenciais configuradas (padrão: admin/admin123).
+
+### 4. Compilação com Arquivos Estáticos Embutidos
+
+A aplicação suporta a compilação em um único binário autônomo, com todos os arquivos estáticos e templates embutidos:
+
+```bash
+# Compile o binário único com todos os recursos
+go build -o jarvis-devops ./cmd/server
+
+# Execute o binário autônomo
+./jarvis-devops
+```
+
+Isso cria um binário único e portátil que não requer a distribuição separada dos arquivos da pasta `/web`.
 
 ## 📁 Estrutura do Projeto
 

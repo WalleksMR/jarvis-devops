@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"jarvis-devops/internal/assets"
 	"jarvis-devops/internal/config"
 	"jarvis-devops/internal/handlers"
 	"jarvis-devops/internal/service"
@@ -32,9 +33,8 @@ func main() {
 	// Create Gin router
 	router := gin.Default()
 
-	// Serve static files and templates at engine level
-	router.Static("/static", "./web/static")
-	router.LoadHTMLGlob("web/templates/*")
+	// Setup embedded assets (static files and templates)
+	assets.SetupRoutes(router)
 
 	// Setup basic auth middleware
 	authorized := router.Group("/", gin.BasicAuth(gin.Accounts{
