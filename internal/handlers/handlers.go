@@ -23,41 +23,18 @@ func NewHandler(nginxService *service.NginxService) *Handler {
 
 // RegisterRoutes registers all API routes
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
-	// Serve static files (note: this needs to be on the engine level)
-
-	// Web interface routes
-	router.GET("/", h.indexPage)
-	router.GET("/editor/:filename", h.editorPage)
-
-	// API routes
-	api := router.Group("api")
-	{
-		api.GET("/status", h.getNginxStatus)
-		api.GET("/configs", h.listConfigFiles)
-		api.GET("/config/:filename", h.getConfigFile)
-		api.PUT("/config/:filename", h.updateConfigFile)
-		api.POST("/validate", h.validateConfig)
-		api.POST("/reload", h.reloadNginx)
-		api.POST("/restart", h.restartNginx)
-		api.GET("/logs", h.getNginxLogs)
-	}
+	// API routes are now directly under the /api prefix with authentication
+	router.GET("/status", h.getNginxStatus)
+	router.GET("/configs", h.listConfigFiles)
+	router.GET("/config/:filename", h.getConfigFile)
+	router.PUT("/config/:filename", h.updateConfigFile)
+	router.POST("/validate", h.validateConfig)
+	router.POST("/reload", h.reloadNginx)
+	router.POST("/restart", h.restartNginx)
+	router.GET("/logs", h.getNginxLogs)
 }
 
-// indexPage serves the main web interface
-func (h *Handler) indexPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title": "Jarvis DevOps",
-	})
-}
-
-// editorPage serves the configuration editor page
-func (h *Handler) editorPage(c *gin.Context) {
-	filename := c.Param("filename")
-	c.HTML(http.StatusOK, "editor.html", gin.H{
-		"title":    "Edit Configuration",
-		"filename": filename,
-	})
-}
+// Note: Frontend routing is now handled by React Router
 
 // getNginxStatus returns the current nginx status
 func (h *Handler) getNginxStatus(c *gin.Context) {

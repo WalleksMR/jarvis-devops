@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/fs"
 	"log"
 	"net/http"
 
@@ -33,16 +34,34 @@ func main() {
 	// Create Gin router
 	router := gin.Default()
 
-	// Setup embedded assets (static files and templates)
+	// Setup embedded assets from React build
 	assets.SetupRoutes(router)
 
-	// Setup basic auth middleware
-	authorized := router.Group("/", gin.BasicAuth(gin.Accounts{
+	// Setup basic auth middleware - only for API routes, not for the React app
+	authorized := router.Group("/api", gin.BasicAuth(gin.Accounts{
 		cfg.BasicAuthUser: cfg.BasicAuthPassword,
 	}))
 
 	// Register routes with auth
 	handler.RegisterRoutes(authorized)
+
+	// Handle any routes not matched by the API to support React Router
+	router.NoRoute(func(c *gin.Context) {
+		// Skip API routes in the NoRoute handler
+		if len(c.Request.URL.Path) >= 4 && c.Request.URL.Path[0:4] == "/api" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "API endpoint not found"})
+			return
+		}
+
+		// For all other routes, serve index.html to support client-side routing
+		c.Header("Content-Type", "text/html; charset=utf-8")
+		content, err := fs.ReadFile(assets.DistFiles, "dist/index.html")
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Error reading index.html")
+			return
+		}
+		c.Data(http.StatusOK, "text/html; charset=utf-8", content)
+	})
 
 	// Health check endpoint (without auth for monitoring)
 	router.GET("/health", func(c *gin.Context) {
