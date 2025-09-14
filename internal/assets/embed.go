@@ -47,7 +47,14 @@ func SetupRoutes(router *gin.Engine) {
 	// Directly serve specific static files
 	router.StaticFileFS("/index.html", "index.html", GetDistFS())
 	router.StaticFileFS("/vite.svg", "vite.svg", GetDistFS())
-
+	// Serve all files in the logos directory
+	router.StaticFS("/logos", http.FS(func() fs.FS {
+		logosFS, err := fs.Sub(DistFiles, "dist/logos")
+		if err != nil {
+			panic(err)
+		}
+		return logosFS
+	}()))
 	// Serve all assets files for the React build
 	router.StaticFS("/assets", GetAssetsFS())
 }
