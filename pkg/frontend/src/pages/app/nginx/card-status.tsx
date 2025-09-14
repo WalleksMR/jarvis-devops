@@ -1,6 +1,6 @@
 type CardStatusProps = {
   name: string;
-  status: boolean;
+  status: boolean | null;
   statusMessage: string;
 };
 export function CardStatus({
@@ -11,7 +11,8 @@ export function CardStatus({
   const bgColor = {
     false: "bg-red-500",
     true: "bg-green-500",
-  }[status.toString()];
+    wait: "bg-yellow-500",
+  }[status === null ? "wait" : status.toString()];
 
   return (
     <div className="rounded-lg bg-white p-5">
@@ -21,7 +22,9 @@ export function CardStatus({
         ></span>
         {name}
       </p>
-      <p className="text-[0.8rem] font-light text-gray-600">{message}</p>
+      <p className="text-[0.8rem] font-light text-gray-600">
+        {status !== null && message}
+      </p>
     </div>
   );
 }

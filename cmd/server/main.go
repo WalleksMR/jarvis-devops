@@ -4,12 +4,14 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"time"
 
 	"jarvis-devops/internal/assets"
 	"jarvis-devops/internal/config"
 	"jarvis-devops/internal/handlers"
 	"jarvis-devops/internal/service"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,6 +35,15 @@ func main() {
 
 	// Create Gin router
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173", "http://127.0.0.1:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// Setup embedded assets from React build
 	assets.SetupRoutes(router)
@@ -94,6 +105,7 @@ func main() {
 		log.Printf("Nginx Config Path: %s", cfg.NginxConfigPath)
 		log.Printf("Nginx Binary: %s", cfg.NginxBinary)
 		log.Printf("Basic Auth User: %s", cfg.BasicAuthUser)
+		log.Printf("CORS: Enabled for specific development origins")
 	} else {
 		log.Printf("Starting Jarvis DevOps server on %s", cfg.GetServerAddress())
 	}
