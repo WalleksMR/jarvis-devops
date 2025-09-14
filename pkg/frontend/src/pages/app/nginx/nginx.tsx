@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CardLogs } from "./card-logs";
 
 export function Nginx() {
-  const [nginxStatus, setNginxStatus] = useState({
+  const [nginxStatus] = useState({
     installed: true,
     running: true,
     configured: true,
